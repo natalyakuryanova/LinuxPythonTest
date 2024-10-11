@@ -1,0 +1,8 @@
+folder_in: /home/user/tst
+folder_out: /home/user/out
+folder_ext: /home/user/folder1
+
+number_files: 5
+bs: 1M
+
+archive_name: arx.7z

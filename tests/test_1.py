@@ -1,57 +1,56 @@
 from checkers import co
 import subprocess
+import yaml, pytest
 
-folder_in = "/home/user/tst"
-folder_out = "/home/user/out"
-folder_ext = "/home/user/folder1"
-folder_ext2 = "/home/user/folder2"
-
-
-def test_add():
-    res1 = co(f"cd {folder_in}; 7z a {folder_out}/arx2.7z",
-              "Everything is Ok")
-    res2 = co(f"ls {folder_out}", "arx2.7z")
-    assert res1 and res2, "test add FAIL"
+with open("config.yaml") as f:
+    data = yaml.safe_load(f)
 
 
-def test_extract():
-    res1 = co(f"cd {folder_out}; 7z e arx2.7z -o{folder_ext} -y",
-              "Everything is Ok")
-    res2 = co(f"ls {folder_ext}", "testfile.txt")
-    assert res1 and res2, "test extract FAIL"
+class TestPositive:
+    def test_add(self, mk_folders, clean_folders, mk_files):
+        res = []
+        res.append(co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['archive_name']}", "Everything is Ok"))
+        res.append(co(f"ls {data['folder_out']}", data['archive_name']))
+        assert all(res), "test add FAIL"
 
+    def test_extract(self, mk_folders, clean_folders, mk_files):
+        res = []
+        res.append(co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['archive_name']}", "Everything is Ok"))
+        res.append(co(f"cd {data['folder_out']}; 7z e {data['archive_name']} -o{data['folder_ext']} -y", "Everything is Ok"))
+        for item in mk_files:
+            res.append(co(f"ls {data['folder_ext']}", item))
+        assert all(res), "test extract FAIL"
 
-def test_test():
-    assert co(f"cd {folder_out}; 7z t arx2.7z", "Everything is Ok")
-    "test test FAIL"
+    def test_test(self):
+        assert co(f"cd {data['folder_out']}; 7z t {data['archive_name']}", "Everything is Ok"), "test test FAIL"
 
+    def test_update(self):
+        assert co(f"cd {data['folder_out']}; 7z u {data['archive_name']}", "Everything is Ok"), "test update FAIL"
 
-def test_update():
-    assert co(f"cd {folder_out}; 7z u arx2.7z",
-              "Everything is Ok")
-    "test update FAIL"
+    def test_list(self, mk_folders, clean_folders, mk_files):
+        res = []
+        res.append(co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['archive_name']}", "Everything is Ok"))
+        for item in mk_files:
+            res.append(co(f"cd {data['folder_out']}; 7z l {data['archive_name']}", item))
+        assert all(res), "test list FAIL"
 
+    def test_extract2(self, mk_folders, clean_folders, mk_files, mk_subfolder):
+        res = []
+        res.append(co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['archive_name']}", "Everything is Ok"))
+        res.append(co(f"cd {data['folder_out']}; 7z x {data['archive_name']} -o{data['folder_ext']} -y", "Everything is Ok"))
+        for item in mk_files:
+            res.append(co(f"ls {data['folder_ext']}", item))
 
-def test_list():
-    res1 = co(f"cd {folder_out}; 7z l arx2.7z", "testfile.txt")
-    res2 = co(f"cd {folder_out}; 7z l arx2.7z", "testfile2.txt")
-    assert res1 and res2, "test list FAIL"
+        res.append(co(f"ls {data['folder_ext']}", mk_subfolder[0]))
+        res.append(co(f"ls {data['folder_ext']}/{mk_subfolder[0]}", mk_subfolder[1]))
+        assert all(res), "test extract2 FAIL"
 
+    def test_hash(self):
+        file_hash = subprocess.run(f"d {data['folder_out']}; crc32 {data['archive_name']}", shell=True, stdout=subprocess.PIPE,
+                                   encoding='utf-8')
+        res = co(f"cd {data['folder_out']}; 7z h {data['archive_name']}", file_hash.stdout.upper())
+        assert res, "test hash FAIL"
 
-def test_extract2():
-    res1 = co(f"cd {folder_out}; 7z x arx2.7z -o{folder_ext2} -y",
-              "Everything is Ok")
-    res2 = co(f"ls {folder_ext2}", "testfile2.txt")
-    res3 = co(f"ls {folder_ext2}", "testdir")
-    assert res1 and res2 and res3, "test extract2 FAIL"
-
-
-def test_hash():
-    file_hash = subprocess.run(f"d {folder_out}; crc32 arx2.7z", shell=True, stdout=subprocess.PIPE, encoding='utf-8')
-    res = co(f"cd {folder_out}; 7z h arx2.7z", file_hash.stdout.upper())
-    assert res, "test hash FAIL"
-
-
-def test_delete():
-    assert co(f"cd {folder_out}; 7z d arx2.7z", "Everything is Ok")
-    "test delete FAIL"
+    def test_delete(self):
+        assert co(f"cd {data['folder_out']}; 7z d {data['archive_name']}", "Everything is Ok")
+        "test delete FAIL"

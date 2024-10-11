@@ -46,3 +46,9 @@ def print_time():
     print("Start: {}".format(datetime.now().strftime("%H:%M:%S.%f")))
     yield
     print("Finish: {}".format(datetime.now().strftime("%H:%M:%S.%f")))
+
+@pytest.fixture()
+def mk_bad_arx():
+    co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['bad_arx_name']}", "Everything is Ok")
+    co(f"truncate -s 1 {data['folder_out']}/{data['bad_arx_name']}")
+

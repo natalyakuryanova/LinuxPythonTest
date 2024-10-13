@@ -2,6 +2,7 @@ from checkers import co
 from datetime import datetime
 import string, random
 import yaml, pytest
+import subprocess
 
 with open("config.yaml") as f:
     data = yaml.safe_load(f)
@@ -49,6 +50,14 @@ def print_time():
 
 @pytest.fixture()
 def mk_bad_arx():
-    co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/{data['bad_arx_name']}", "Everything is Ok")
-    co(f"truncate -s 1 {data['folder_out']}/{data['bad_arx_name']}")
+    co(f"cd {data['folder_in']}; 7z a {data['folder_out']}/barx.{data['type']} -t{data['type']}", "Everything is Ok")
+    co(f"truncate -s 1 {data['folder_out']}/barx.{data['type']}")
+    yield f"barx.{data['type']}"
+    co(f"rm -f {data['folder_out']}/barx.{data['type']}")
+
+@pytest.fixture(autouse=True)
+def get_stat():
+    yield
+    stat = subprocess.run("cat /proc/loadavg", shell=True, stdout=subprocess.PIPE, encoding='utf-8')
+    co(f"echo 'time: {datetime.now().strftime('%H:%M:%S.%f')} count:{data['number_files']} size: {data['bs']} load: {stat.stdout}'>> stat.txt")
 

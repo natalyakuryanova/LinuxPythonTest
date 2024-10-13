@@ -2,8 +2,7 @@ folder_in: /home/user/tst
 folder_out: /home/user/out
 folder_ext: /home/user/folder1
 
-number_files: 5
-bs: 1M
+number_files: 2
+bs: 5M
 
-arx_name: arx.7z
-bad_arx_name: barx.7z
+type: 7z

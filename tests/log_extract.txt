@@ -1,0 +1,8 @@
+окт 17 02:23:39 userpc snapd-desktop-i[47707]: Detected new session 661 at /org/freedesktop/login1/session/_3661
+окт 17 02:23:39 userpc snapd-desktop-i[47707]: Detected new session 662 at /org/freedesktop/login1/session/_3662
+окт 17 02:23:39 userpc snapd-desktop-i[47707]: Detected new session 663 at /org/freedesktop/login1/session/_3663
+окт 17 02:23:40 userpc snapd-desktop-i[47707]: Detected new session 664 at /org/freedesktop/login1/session/_3664
+окт 17 02:23:40 userpc snapd-desktop-i[47707]: Detected new session 665 at /org/freedesktop/login1/session/_3665
+Hint: You are currently not seeing messages from other users and the system.
+      Users in groups 'adm', 'systemd-journal' can see all messages.
+      Pass -q to turn off this notice.

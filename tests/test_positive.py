@@ -1,6 +1,6 @@
 from checkers import co
 import subprocess
-import yaml, pytest
+import yaml
 
 with open("config.yaml") as f:
     data = yaml.safe_load(f)
@@ -46,7 +46,7 @@ class TestPositive:
         assert all(res), "test extract2 FAIL"
 
     def test_hash(self):
-        file_hash = subprocess.run(f"d {data['folder_out']}; crc32 arx.{data['type']}", shell=True, stdout=subprocess.PIPE,
+        file_hash = subprocess.run(f"cd {data['folder_out']}; crc32 arx.{data['type']}", shell=True, stdout=subprocess.PIPE,
                                    encoding='utf-8')
         res = co(f"cd {data['folder_out']}; 7z h arx.{data['type']}", file_hash.stdout.upper())
         assert res, "test hash FAIL"

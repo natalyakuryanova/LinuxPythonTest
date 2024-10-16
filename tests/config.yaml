@@ -2,7 +2,19 @@ folder_in: /home/user/tst
 folder_out: /home/user/out
 folder_ext: /home/user/folder1
 
-number_files: 2
-bs: 5M
+folder_in2: /home/user2/tst
+folder_out2: /home/user2/out
+folder_ext2: /home/user2/folder1
+
+number_files: 5
+bs: 1SM
 
 type: 7z
+
+ip: 0.0.0.0
+user: user2
+passwd: "11"
+pkgname: p7zip-full
+
+lpath: /home/user/dst/
+
